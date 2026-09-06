@@ -21,6 +21,8 @@ fun InfoRow(left: String, right: String?) {
             }
             Text(text = "%s: ".format(left), Modifier.weight(0.5f), textAlign = TextAlign.End)
             Text(text = _right, Modifier.weight(0.5f),)
+            // string-resource позволяет поддерживать разные языки, менять порядок слов
+            // annotatedString позволяет применять разное форматирование к разным частям текста
         }
     }
 }

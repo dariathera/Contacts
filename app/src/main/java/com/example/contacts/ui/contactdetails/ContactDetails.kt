@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +29,14 @@ import com.example.contacts.ui.common.InfoRow
 
 @Composable
 fun ContactDetails(contact: Contact, modifier: Modifier = Modifier) {
+    // Закомментированный код не работает. Пояснение:
+    // This is because stringResource is a @Composable function. In Compose, composable functions
+    // can only be called from other composable functions. The block inside remember { ... }
+    // is a standard Kotlin lambda (a calculation block), not a composable context.
+    // val addressLabel = remember { stringResource(R.string.address) }
+    val fullName = remember(contact.name, contact.surname) {
+        "${contact.name} ${contact.surname.orEmpty()}"
+    }
     Column(
         modifier = modifier
     ) {
@@ -61,9 +70,16 @@ fun ContactDetails(contact: Contact, modifier: Modifier = Modifier) {
 
                 ContactPhoto(contact)
                 Spacer(modifier = Modifier.height(10.dp))
+                /*
+                В @Composable функциях строки, такие как stringResource(...) или конкатенации,
+                создаются заново при каждой рекомпозиции. Это может приводить к созданию
+                лишних объектов String, которые нагружают сборщик мусора, особенно
+                если функция рекомпозируется часто (например, при обновлении списка или анимациях).
+                */
                 Text(
                     style = MaterialTheme.typography.titleSmall,
-                    text = "${contact.name} ${contact.surname.orEmpty()}")
+                    // text = "${contact.name} ${contact.surname.orEmpty()}"
+                    text = fullName)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
